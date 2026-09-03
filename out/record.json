@@ -1,0 +1,30 @@
+{
+  "schema_version": "face-verify/v1.0",
+  "created_at_utc": "2026-09-03T13:49:57+00:00",
+  "identity_claim": {
+    "query_image_sha256": "3f46aed101a2b1f3c4d0f8d355879be560d5a7cb74716f7279a1194ef4889a75",
+    "face_model": "intensity_gradient_128",
+    "detector": "portrait_roi_crop"
+  },
+  "social_proof": {
+    "platform": "linkedin",
+    "post_url": "https://www.linkedin.com/posts/aakash-pathrikar-483aa4324_hackathon-halaerothon-teamwork-activity-7416675369304461313-DK1k",
+    "candidate_thumbnail_sha256": "862399822d522d830cabd1b02e3e06cbab9e4645bc611369cb9c143bf26ae3d8"
+  },
+  "verification_result": {
+    "verified": false,
+    "similarity_percentage": 43.92,
+    "distance": 0.5608,
+    "threshold": 0.4
+  },
+  "search_provenance": {
+    "engine": "google_lens/serpapi",
+    "search_raw_sha256": "d7a562ee9427a66b15a0b3150896cbdc296927764d19cf2cc9d346511c2ab1c7"
+  },
+  "onchain_anchoring": {
+    "chain_id": 11155111,
+    "contract_address": "0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC",
+    "tx_hash": "a2adb0e068fdb63cc8be796147c2e0a6d4dc46fe2713d29c5dd130a0613ff9de",
+    "record_hash": "0x14d9ae2cdee9e128cfd0fc1dfb0347b30db3fa0558c0147b7aac4a44a1a3c23a"
+  }
+}

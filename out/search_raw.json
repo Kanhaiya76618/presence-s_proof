@@ -1,0 +1,35 @@
+{
+  "search_metadata": {
+    "id": "66d655f4b23838128919a3b2",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/66d655f4b23838128919a3b2.json",
+    "created_at": "2026-09-03 03:00:00 UTC",
+    "processed_at": "2026-09-03 03:00:01 UTC",
+    "google_lens_url": "https://lens.google.com/uploadbyurl?url=https://presence-proof.internal/sample.png",
+    "raw_html_file": "https://serpapi.com/searches/66d655f4b23838128919a3b2.html",
+    "total_time_taken": 1.42
+  },
+  "search_parameters": {
+    "engine": "google_lens",
+    "url": "https://presence-proof.internal/sample.png",
+    "hl": "en"
+  },
+  "visual_matches": [
+    {
+      "position": 1,
+      "title": "Aakash Pathrikar on LinkedIn: #hackathon #halaerothon #teamwork #activity",
+      "link": "https://www.linkedin.com/posts/aakash-pathrikar-483aa4324_hackathon-halaerothon-teamwork-activity-7416675369304461313-DK1k",
+      "source": "LinkedIn",
+      "thumbnail": "https://media.licdn.com/dms/image/v2/D5622AQGv_3aM5s/feedshare-shrink_800/feedshare-shrink_800/0/1714523456?e=2147483647&v=beta&t=example",
+      "source_icon": "https://static.licdn.com/sc/h/al2o9zrv\u0e40\u0e046v752j3b838v8b"
+    },
+    {
+      "position": 2,
+      "title": "Kanhaiya Mehta - Student at IIIT Dharwad | LinkedIn",
+      "link": "https://in.linkedin.com/in/kanhaiya-mehta-5246302a7",
+      "source": "LinkedIn",
+      "thumbnail": "https://media.licdn.com/dms/image/v2/D5622AQGv_profile/profile-shrink_800/0/example",
+      "source_icon": "https://static.licdn.com/sc/h/al2o9zrv\u0e40\u0e046v752j3b838v8b"
+    }
+  ]
+}
