@@ -1,0 +1,13 @@
+{
+  "name": "presence-s-proof-verifiers",
+  "version": "1.0.0",
+  "description": "Standalone cross-platform Node.js verifier for RFC-8785 canonical records and Ethereum Sepolia anchoring",
+  "type": "module",
+  "scripts": {
+    "verify": "node verifiers/verify.mjs"
+  },
+  "dependencies": {
+    "js-sha3": "^0.9.3",
+    "json-canonicalize": "^1.0.6"
+  }
+}

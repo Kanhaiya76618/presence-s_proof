@@ -9,74 +9,126 @@ A tamper-evident, decentralized verification pipeline that detects and encodes a
 ```
 [ input.jpg ] (Selfie / Portrait)
      │
-     ├──► [1] Face Detection & Embedding
-     │          └── Extracts normalized 128-d/512-d feature vector (ArcFace / CNN)
+     ├──► [1] Face Detection & Feature Hashing
+     │          ├── Extracts normalized 128-d/512-d feature vector (ArcFace / CNN)
+     │          └── Computes embedding_sha256 = SHA-256(raw_embedding_bytes)
+     │          └── Raw vector is NEVER persisted in the record
      │
      ├──► [2] Live Reverse Image Search (Google Lens via SerpAPI)
-     │          └── Discovers public appearances across LinkedIn, X/Twitter, Instagram
+     │          ├── Discovers public appearances across LinkedIn, X/Twitter, Instagram
      │          └── Archives raw API response to `out/search_raw.json` (search provenance)
      │
      ├──► [3] Candidate Social Post & Facial Cross-Verification
-     │          └── Downloads candidate post media / thumbnail
-     │          └── Performs cosine similarity comparison across detected candidate faces
-     │          └── Establishes confidence score and verification status
+     │          ├── Downloads candidate post media / thumbnail
+     │          ├── Performs cosine similarity comparison across detected candidate faces
+     │          └── Computes candidate thumbnail SHA-256 and cosine similarity (rounded to 4 decimals)
      │
-     ├──► [4] Canonical Tamper-Evident Record Construction
-     │          ├── Computes SHA-256 of input photo & candidate media (raw bytes)
+     ├──► [4] Canonical Tamper-Evident Record Construction (Schema v2)
+     │          ├── Computes SHA-256 of input photo & candidate thumbnails (raw bytes)
      │          ├── Computes SHA-256 of raw search response
-     │          ├── Serializes record in strict RFC-8785 canonical JSON (sorted keys, UTF-8)
+     │          ├── Serializes record strictly conforming to RFC-8785 (JSON Canonicalization Scheme)
      │          └── Computes 32-byte Keccak-256 cryptographic digest
      │
      ├──► [5] On-Chain Anchoring (Ethereum Sepolia)
-     │          └── Calls `FaceMatchRegistry.anchorRecord(recordHash, cid)`
+     │          ├── Calls `FaceMatchRegistry.anchorRecord(recordHash, cid)`
      │          └── Emits `MatchAnchored` event on Etherscan
      │
      └──► [6] Zero-Gas Independent Verification (`verify` CLI)
-                └── Independent auditors recompute the root hash from `record.json`
+                ├── Independent auditors recompute the root hash from `record.json`
                 └── Calls public view function `verifyRecord(recordHash)` to prove authenticity
 ```
 
 ---
 
-## 🔒 Cryptographic Tamper-Evidence Design
+## 🔒 Cryptographic Tamper-Evidence & RFC-8785 Specification
 
-To guarantee that no record can be fabricated or modified post-anchoring, this pipeline enforces multi-layer cryptographic commitments:
+To guarantee that no record can be fabricated or modified post-anchoring, this pipeline enforces strict cryptographic commitments:
 
-1. **Deterministic Canonicalization (RFC-8785)**:
-   Any JSON record is sorted alphabetically by key and encoded with strict no-whitespace delimiters:
-   ```python
-   canonical_bytes = json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-   ```
-2. **Ethereum Keccak-256 Root Digest**:
-   The canonical bytes are hashed using Ethereum-standard Keccak-256:
-   $$\text{record\_hash} = \text{Keccak-256}(\text{canonical\_bytes})$$
-3. **Zero Biometric Exposure**:
-   Raw image files, vector embeddings, and PII **never** touch the blockchain. Only cryptographic hashes are recorded.
+### 1. True RFC-8785 Canonicalization (JSON Canonicalization Scheme - JCS)
+RFC 8785 defines a deterministic JSON representation regardless of programming language or runtime environment:
+- Keys are sorted lexicographically by UTF-16 code units.
+- Numbers follow ECMAScript canonical representation (no NaN, Infinity, or non-standard notation).
+- Delimiters contain zero insignificant whitespace (no space after commas or colons).
+- Strings are encoded in strict UTF-8 without unnecessary escapes.
+
+Implementation in Python:
+```python
+import rfc8785
+canonical_bytes = rfc8785.dumps(record)
+```
+
+### 2. Ethereum Keccak-256 Root Digest
+The canonical bytes are hashed using Ethereum-standard Keccak-256:
+$$\text{record\_hash} = \text{Keccak-256}(\text{canonical\_bytes})$$
+
+### 3. Zero Biometric Exposure
+Raw image files, floating-point embedding vectors, and biometric PII **never** touch the record or the blockchain. The identity claim only holds the SHA-256 digest of the embedding bytes (`embedding_sha256`), the model architecture, and the embedding dimension.
 
 ---
 
-## 🚀 Quickstart Guide
+## 🚀 Standalone Independent Verifier Snippet
 
-### 1. Prerequisites
-- Python 3.10+
-- A free **SerpAPI Key** (from [serpapi.com](https://serpapi.com))
-- A free **Ethereum Sepolia RPC URL** (from [alchemy.com](https://alchemy.com) or Infura)
-- A testnet burner private key funded with free Sepolia ETH (from [Google Cloud Web3 Faucet](https://cloud.google.com/application/web3/faucet) or [Alchemy Faucet](https://sepoliafaucet.com))
+Any third party can audit a `record.json` file independently using only public RPC endpoints without needing the private key, our repository, or custom tools:
 
-### 2. Installation
+```python
+import json
+import rfc8785
+from eth_utils import keccak
+from web3 import Web3
+
+# 1. Load record and strip any post-anchoring block metadata
+with open("out/record.json", "r", encoding="utf-8") as f:
+    full_record = json.load(f)
+
+audit_record = {k: v for k, v in full_record.items() if k != "onchain_anchoring"}
+
+# 2. Recompute RFC-8785 canonical bytes and Keccak-256 digest
+canonical_bytes = rfc8785.dumps(audit_record)
+recomputed_hash = keccak(canonical_bytes)
+print(f"Recomputed Hash: 0x{recomputed_hash.hex()}")
+
+# 3. Query the contract via public Sepolia RPC (zero gas, read-only view)
+MINIMAL_ABI = [{
+    "inputs": [{"internalType": "bytes32", "name": "recordHash", "type": "bytes32"}],
+    "name": "verifyRecord",
+    "outputs": [
+        {"internalType": "bool", "name": "exists", "type": "bool"},
+        {"internalType": "address", "name": "submitter", "type": "address"},
+        {"internalType": "uint64", "name": "anchoredAt", "type": "uint64"},
+        {"internalType": "string", "name": "cid", "type": "string"}
+    ],
+    "stateMutability": "view",
+    "type": "function"
+}]
+
+w3 = Web3(Web3.HTTPProvider("https://rpc.sepolia.org"))
+CONTRACT_ADDRESS = "0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC"
+
+contract = w3.eth.contract(address=Web3.to_checksum_address(CONTRACT_ADDRESS), abi=MINIMAL_ABI)
+exists, submitter, timestamp, cid = contract.functions.verifyRecord(recomputed_hash).call()
+
+if exists:
+    print(f"VERIFIED ✅: Anchored by {submitter} at block timestamp {timestamp}")
+else:
+    print("NOT FOUND ❌: Hash does not exist on-chain or record was modified.")
+```
+
+---
+
+## 💻 CLI Quickstart & Usage
+
+### 1. Installation
 ```bash
 git clone https://github.com/Kanhaiya76618/presence-s_proof.git
 cd presence-s_proof
 
-# Set up virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Environment Configuration
+### 2. Environment Configuration
 Copy the template and fill in your keys:
 ```bash
 cp .env.example .env
@@ -86,72 +138,46 @@ Edit `.env`:
 SERPAPI_KEY=your_serpapi_key_here
 RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
 PRIVATE_KEY=0x_your_sepolia_burner_private_key
+ETHERSCAN_API_KEY=your_etherscan_key_here
 ```
 
----
-
-## 💻 CLI Usage
-
-### A. Deploy Contract to Sepolia
+### 3. Deploy Smart Contract
 Deploys `FaceMatchRegistry.sol` to Ethereum Sepolia and writes the contract address to `out/deployment.json`:
 ```bash
 python pipeline.py deploy
 ```
 
-### B. Run Full Verification Pipeline
-Runs end-to-end detection, live reverse search, face matching, canonical hashing, and on-chain anchoring:
+### 4. Run Verification Pipeline
 ```bash
+# Live run
 python pipeline.py run data/sample.png
+
+# Offline / dev re-runs using cached search audit trail
+python pipeline.py run data/sample.png --use-cache
 ```
 
-*Flags available:*
-- `--cache`: Uses local cached search audit trail (`out/search_raw.json`) to conserve SerpAPI credits during practice.
-- `--limit <N>`: Sets the maximum candidate social matches evaluated (default: 5).
-- `--skip-chain`: Executes off-chain stages (useful for dry runs).
-
-### C. Independent Audit & Verification
-Anyone with `out/record.json` and a public Ethereum node can independently verify the record without needing original photos:
+### 5. Independent Verification
 ```bash
 python pipeline.py verify out/record.json
 ```
-**Expected Output:**
-```text
-======================================================================
-  INDEPENDENT RECORD AUDIT & ON-CHAIN VERIFICATION
-======================================================================
-
-[1] Off-Chain Cryptographic Integrity:
-  Recomputed Canonical Keccak-256: 0x96dcb0fe94d7cb923b7d4222760a1b8fe6a84a46fc752d22477b2b666d53b5ed
-  ✓ Local record matches stated cryptographic root! (NO TAMPERING)
-
-[2] On-Chain Sepolia Attestation Check:
-  Querying Contract: 0x5FbDB2315678afecb367f032d93F642f64180aa3
-
-**************************************************
-  RESULT: VERIFIED AUTHENTIC ON-CHAIN ✅
-  Submitter Address: 0x90F79bf6EB2c4f870365E785982E1f101E93b906
-  Anchored Timestamp: 2026-09-03T03:02:44+00:00
-  Post URL Claim:     https://www.linkedin.com/posts/aakash-pathrikar-483aa4324_hackathon-halaerothon-teamwork-activity-7416675369304461313-DK1k
-  Similarity Score:   89.5%
-**************************************************
-```
 
 ---
 
-## ⛓️ Why Ethereum Sepolia?
+## ⚠️ Known Limitations
 
-1. **Decentralization & Public Accessibility**: Sepolia is Ethereum’s primary testnet. It provides identical EVM semantics to Ethereum Mainnet without incurring financial cost.
-2. **Zero-Trust Independent Audit**: Anyone can inspect transactions, timestamp proofs, and event logs using public block explorers like [sepolia.etherscan.io](https://sepolia.etherscan.io).
-3. **No Proprietary Vendor Lock-in**: The verification function is a pure view method (`verifyRecord`), requiring zero gas and zero credentials to query.
+1. **Search Coverage Dynamics**: Google Lens reverse-image search coverage is point-in-time, regional, and depends on public web crawlers. Private profiles or freshly posted images may not be indexed immediately.
+2. **Existence Proof vs. Identity Truth**: The on-chain hash cryptographically proves that the record existed and was unmodified since block timestamp $T$. It does **not** prove absolute ground-truth identity; this is mitigated by our ArcFace cosine-similarity thresholding, but not eliminated.
+3. **API Dependency & Rate Limits**: Live reverse search relies on SerpAPI/Google Lens quotas. Dev runs should leverage `--use-cache` to avoid quota exhaustion.
+4. **Single-Deployer Anchoring**: Single-account transaction submission guarantees tamper-evidence and immutable timestamping, but does not constitute a decentralized multi-party oracle attestation.
+5. **Block Timestamp Granularity**: Ethereum block timestamps are determined by validators and are accurate to within approximately ~12 seconds.
+6. **Zero Biometrics On-Chain**: The smart contract stores only a 32-byte cryptographic hash. No images, facial embeddings, or PII ever leave the local machine or enter blockchain storage.
 
 ---
 
-## ⚠️ Known Limitations & Disclosures
+## 🛡️ Consent & Ethics
 
-1. **Search Engine Indexing Latency**: Reverse-image engines (Google Lens) can only locate public posts crawled by web spiders. Private accounts or freshly published posts may take hours or days to appear in public indexes.
-2. **Face Matching Variances**: Lighting conditions, extreme angles, occlusions (glasses, masks), and image resolution can introduce variance in cosine similarity metrics.
-3. **Tamper-Evidence vs. Real-World Truth**: Anchoring on a blockchain cryptographically proves that a specific verification result existed at block timestamp $T$ and was signed by submitter $S$; it does not replace identity authorities or legal certifications.
-4. **Rate Limits**: Free SerpAPI plans allow 100 queries/month. Use `--cache` for iterative testing.
+- **Consensual Demo**: The demonstration photo depicts the project team members (Team Pixel.ai) who provided explicit consent for this demonstration.
+- **Privacy & Compliance**: Users must only process and verify photos for which they possess appropriate legal rights and consent. General-purpose face search of non-consenting individuals touches biometric privacy frameworks including the Illinois Biometric Information Privacy Act (BIPA) and the EU General Data Protection Regulation (GDPR). Raw biometric vectors are hashed and discarded locally to uphold data minimization principles.
 
 ---
 

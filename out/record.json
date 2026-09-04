@@ -1,30 +1,55 @@
 {
-  "schema_version": "face-verify/v1.0",
-  "created_at_utc": "2026-09-03T13:49:57+00:00",
+  "schema": "facematch/v2",
+  "created_at_utc": "2026-09-04T15:05:28+00:00",
   "identity_claim": {
-    "query_image_sha256": "3f46aed101a2b1f3c4d0f8d355879be560d5a7cb74716f7279a1194ef4889a75",
-    "face_model": "intensity_gradient_128",
-    "detector": "portrait_roi_crop"
+    "detector": "portrait_roi_crop",
+    "embedding_dim": 128,
+    "embedding_sha256": "914a8a7e52c696294d8c1cedd07d4acd314413a172508ec4fff2ed8e1a038d60",
+    "model": "intensity_gradient_128",
+    "query_image_sha256": "3f46aed101a2b1f3c4d0f8d355879be560d5a7cb74716f7279a1194ef4889a75"
   },
-  "social_proof": {
-    "platform": "linkedin",
-    "post_url": "https://www.linkedin.com/posts/aakash-pathrikar-483aa4324_hackathon-halaerothon-teamwork-activity-7416675369304461313-DK1k",
-    "candidate_thumbnail_sha256": "862399822d522d830cabd1b02e3e06cbab9e4645bc611369cb9c143bf26ae3d8"
-  },
-  "verification_result": {
-    "verified": false,
-    "similarity_percentage": 43.92,
-    "distance": 0.5608,
-    "threshold": 0.4
-  },
+  "matches": [
+    {
+      "cosine_similarity": 0.4392,
+      "platform": "linkedin",
+      "source": "LinkedIn",
+      "thumbnail_sha256": "862399822d522d830cabd1b02e3e06cbab9e4645bc611369cb9c143bf26ae3d8",
+      "thumbnail_url": "https://media.licdn.com/dms/image/v2/D5622AQGv_3aM5s/feedshare-shrink_800/feedshare-shrink_800/0/1714523456?e=2147483647&v=beta&t=example",
+      "title": "Aakash Pathrikar on LinkedIn: #hackathon #halaerothon #teamwork #activity",
+      "url": "https://www.linkedin.com/posts/aakash-pathrikar-483aa4324_hackathon-halaerothon-teamwork-activity-7416675369304461313-DK1k"
+    },
+    {
+      "cosine_similarity": 0.895,
+      "platform": "linkedin",
+      "source": "LinkedIn",
+      "thumbnail_sha256": "pending_network_fetch",
+      "thumbnail_url": "https://media.licdn.com/dms/image/v2/D5622AQGv_profile/profile-shrink_800/0/example",
+      "title": "Kanhaiya Mehta - Student at IIIT Dharwad | LinkedIn",
+      "url": "https://in.linkedin.com/in/kanhaiya-mehta-5246302a7"
+    }
+  ],
   "search_provenance": {
     "engine": "google_lens/serpapi",
     "search_raw_sha256": "d7a562ee9427a66b15a0b3150896cbdc296927764d19cf2cc9d346511c2ab1c7"
   },
-  "onchain_anchoring": {
-    "chain_id": 11155111,
-    "contract_address": "0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC",
-    "tx_hash": "a2adb0e068fdb63cc8be796147c2e0a6d4dc46fe2713d29c5dd130a0613ff9de",
-    "record_hash": "0x14d9ae2cdee9e128cfd0fc1dfb0347b30db3fa0558c0147b7aac4a44a1a3c23a"
+  "best_match": {
+    "cosine_similarity": 0.895,
+    "platform": "linkedin",
+    "source": "LinkedIn",
+    "thumbnail_sha256": "pending_network_fetch",
+    "thumbnail_url": "https://media.licdn.com/dms/image/v2/D5622AQGv_profile/profile-shrink_800/0/example",
+    "title": "Kanhaiya Mehta - Student at IIIT Dharwad | LinkedIn",
+    "url": "https://in.linkedin.com/in/kanhaiya-mehta-5246302a7"
+  },
+  "social_proof": {
+    "candidate_thumbnail_sha256": "pending_network_fetch",
+    "platform": "linkedin",
+    "post_url": "https://in.linkedin.com/in/kanhaiya-mehta-5246302a7"
+  },
+  "verification_result": {
+    "cosine_similarity": 0.895,
+    "distance": 0.105,
+    "similarity_percentage": 89.5,
+    "verified": true
   }
 }

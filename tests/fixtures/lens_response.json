@@ -1,0 +1,60 @@
+{
+  "_test_fixture_note": "SYNTHETIC TEST FIXTURE: Synthetic mock data for offline unit tests. Not real API data.",
+  "search_metadata": {
+    "id": "mock_test_search_12345",
+    "status": "Success",
+    "json_endpoint": "https://fake-serpapi.test/searches/mock_test_search_12345.json",
+    "created_at": "2026-09-04 12:00:00 UTC",
+    "processed_at": "2026-09-04 12:00:01 UTC",
+    "google_lens_url": "https://lens.google.com/uploadbyurl?url=https://example.test/mock.png",
+    "raw_html_file": "https://fake-serpapi.test/searches/mock_test_search_12345.html",
+    "total_time_taken": 1.05
+  },
+  "search_parameters": {
+    "engine": "google_lens",
+    "url": "https://example.test/mock.png",
+    "hl": "en"
+  },
+  "visual_matches": [
+    {
+      "position": 1,
+      "title": "Mock User LinkedIn Profile and Post",
+      "link": "https://www.linkedin.com/posts/fake-user-mock-post-1234567890",
+      "source": "LinkedIn",
+      "thumbnail": "https://media.licdn.fake/mock_thumb_1.jpg",
+      "source_icon": "https://static.licdn.fake/icon.png"
+    },
+    {
+      "position": 2,
+      "title": "Mock User on X (formerly Twitter)",
+      "link": "https://x.com/fake_user/status/9876543210987654321",
+      "source": "X",
+      "thumbnail": "https://pbs.twimg.fake/mock_thumb_2.jpg",
+      "source_icon": "https://abs.twimg.fake/icon.png"
+    },
+    {
+      "position": 3,
+      "title": "Unrelated Personal Blog Post",
+      "link": "https://random-unrelated-blog.example.com/article-123",
+      "source": "Random Blog",
+      "thumbnail": "https://random-unrelated-blog.example.com/thumb.jpg",
+      "source_icon": "https://random-unrelated-blog.example.com/favicon.ico"
+    },
+    {
+      "position": 4,
+      "title": "Mock Instagram Photo",
+      "link": "https://www.instagram.com/p/C_mock_post_xyz/",
+      "source": "Instagram",
+      "thumbnail": "https://instagram.fake/mock_thumb_3.jpg",
+      "source_icon": "https://instagram.fake/icon.png"
+    },
+    {
+      "position": 5,
+      "title": "Duplicate LinkedIn Link",
+      "link": "https://www.linkedin.com/posts/fake-user-mock-post-1234567890",
+      "source": "LinkedIn",
+      "thumbnail": "https://media.licdn.fake/mock_thumb_1.jpg",
+      "source_icon": "https://static.licdn.fake/icon.png"
+    }
+  ]
+}

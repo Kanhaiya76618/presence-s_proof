@@ -58,6 +58,24 @@ CONTRACT_ABI = [
     }
 ]
 
+# Minimal ABI specifically for independent view verification with zero write/deploy overhead
+MINIMAL_ABI = [
+    {
+        "inputs": [
+            {"internalType": "bytes32", "name": "recordHash", "type": "bytes32"}
+        ],
+        "name": "verifyRecord",
+        "outputs": [
+            {"internalType": "bool", "name": "exists", "type": "bool"},
+            {"internalType": "address", "name": "submitter", "type": "address"},
+            {"internalType": "uint64", "name": "anchoredAt", "type": "uint64"},
+            {"internalType": "string", "name": "cid", "type": "string"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
+
 def get_rpc_url() -> str:
     from dotenv import load_dotenv
     load_dotenv()
@@ -195,12 +213,13 @@ def anchor_hash(
 def verify_hash(
     w3,
     contract_address: str,
-    abi: list,
-    record_hash_bytes: bytes
+    record_hash_bytes: bytes,
+    abi: Optional[list] = None
 ) -> Dict[str, Any]:
-    """Query verifyRecord view function (zero gas)."""
+    """Query verifyRecord view function (zero gas). Defaults to MINIMAL_ABI."""
     from web3 import Web3
-    contract = w3.eth.contract(address=Web3.to_checksum_address(contract_address), abi=abi)
+    use_abi = abi if abi is not None else MINIMAL_ABI
+    contract = w3.eth.contract(address=Web3.to_checksum_address(contract_address), abi=use_abi)
     exists, submitter, ts, cid = contract.functions.verifyRecord(record_hash_bytes).call()
     return {
         "exists": exists,
