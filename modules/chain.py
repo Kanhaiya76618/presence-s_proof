@@ -4,8 +4,9 @@ from pathlib import Path
 from typing import Dict, Any, Tuple, Optional
 
 # Default public Sepolia RPC fallback
-DEFAULT_SEPOLIA_RPC = "https://rpc.sepolia.org"
+DEFAULT_SEPOLIA_RPC = "https://ethereum-sepolia-rpc.publicnode.com"
 SOLC_VERSION = "0.8.24"
+
 
 # Pre-compiled fallback ABI for FaceMatchRegistry to guarantee zero-failure execution
 CONTRACT_ABI = [

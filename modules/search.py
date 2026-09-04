@@ -139,8 +139,9 @@ def download_candidate_image(thumbnail_url: str, output_path: str) -> Optional[s
 
     try:
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        resp = requests.get(thumbnail_url, timeout=20)
+        resp = requests.get(thumbnail_url, timeout=6)
         if resp.status_code == 200 and len(resp.content) > 500:
+
             with open(output_path, "wb") as f:
                 f.write(resp.content)
             return output_path
