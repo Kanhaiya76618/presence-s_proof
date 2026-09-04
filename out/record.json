@@ -1,16 +1,17 @@
 {
   "schema": "facematch/v2",
-  "created_at_utc": "2026-09-04T15:05:28+00:00",
+  "created_at_utc": "2026-09-04T19:05:34+00:00",
   "identity_claim": {
-    "detector": "portrait_roi_crop",
-    "embedding_dim": 128,
-    "embedding_sha256": "914a8a7e52c696294d8c1cedd07d4acd314413a172508ec4fff2ed8e1a038d60",
-    "model": "intensity_gradient_128",
+    "detector": "opencv",
+    "embedding_dim": 512,
+    "embedding_sha256": "9a4f06f357560aca33cf8829311f3e126391633b29c12af4d4d8e3bcfddbf893",
+    "embedding_sha256_spec": "sha256 over little-endian float32 bytes",
+    "model": "ArcFace",
     "query_image_sha256": "3f46aed101a2b1f3c4d0f8d355879be560d5a7cb74716f7279a1194ef4889a75"
   },
   "matches": [
     {
-      "cosine_similarity": 0.4392,
+      "cosine_similarity": 0.7206,
       "platform": "linkedin",
       "source": "LinkedIn",
       "thumbnail_sha256": "862399822d522d830cabd1b02e3e06cbab9e4645bc611369cb9c143bf26ae3d8",
