@@ -2,7 +2,8 @@
 
 **Project**: Face ID + Blockchain Verification Pipeline  
 **Team**: Pixel.ai (IIIT Dharwad)  
-**Contract on Sepolia**: [`0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC`](https://sepolia.etherscan.io/address/0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC)
+**Contract on Sepolia**: [`0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC`](https://sepolia.etherscan.io/address/0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC)  
+**Live Demo Video**: [https://www.youtube.com/watch?v=6pyeahMx-y8](https://www.youtube.com/watch?v=6pyeahMx-y8)
 
 ---
 

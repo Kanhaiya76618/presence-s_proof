@@ -2,6 +2,8 @@
 
 A tamper-evident, decentralized verification pipeline that detects and encodes a face from an input image, identifies matching public social media posts via genuine Google Lens reverse-image search, computes cross-image facial similarity, and anchors a cryptographic root proof onto Ethereum Sepolia.
 
+📺 **Live Demo Video (Unedited Single-Take)**: [https://www.youtube.com/watch?v=6pyeahMx-y8](https://www.youtube.com/watch?v=6pyeahMx-y8)
+
 ---
 
 ## 🏛️ Architecture & Verification Flow

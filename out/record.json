@@ -1,6 +1,6 @@
 {
   "schema": "facematch/v2",
-  "created_at_utc": "2026-09-04T19:05:34+00:00",
+  "created_at_utc": "2026-09-07T12:04:29+00:00",
   "identity_claim": {
     "detector": "opencv",
     "embedding_dim": 512,
@@ -52,5 +52,11 @@
     "distance": 0.105,
     "similarity_percentage": 89.5,
     "verified": true
+  },
+  "onchain_anchoring": {
+    "chain_id": 11155111,
+    "contract_address": "0xF474d2Bd987A556781c5daBE0fe743CBf53F29EC",
+    "tx_hash": "3ba4ebd4ec8eba453443b2f1761a9e0e32ead4348a02f1c975459d3bbc5fed1d",
+    "record_hash": "0x336b304863c41ae483cd8bf95064f641a399f0701079e04039816cf19469e11e"
   }
 }
